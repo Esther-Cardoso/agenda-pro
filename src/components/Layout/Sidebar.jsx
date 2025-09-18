@@ -1,11 +1,25 @@
-import { NavLink } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const [activeLink, setActiveLink] = useState('/');
+  const location = useLocation();
+
   const navigation = [
     { name: 'Dashboard', href: '/', icon: 'home' },
     { name: 'Todos os Contatos', href: '/contacts', icon: 'users' },
     { name: 'Novo Contato', href: '/contacts/new', icon: 'user-add' },
   ];
+
+  // Atualiza o link ativo quando a localização muda
+  useEffect(() => {
+    setActiveLink(location.pathname);
+  }, [location.pathname]);
+
+  const handleLinkClick = (href) => {
+    setActiveLink(href);
+    onClose();
+  };
 
   return (
     <>
@@ -33,15 +47,15 @@ const Sidebar = ({ isOpen, onClose }) => {
             <NavLink
               key={item.name}
               to={item.href}
-              className={({ isActive }) => `
+              className={`
                 flex items-center px-6 py-3 text-white text-sm font-medium
                 ${
-                  isActive
+                  activeLink === item.href
                     ? 'bg-blue-900 bg-opacity-25 border-r-4 border-white'
                     : 'hover:bg-blue-700'
                 }
               `}
-              onClick={onClose}
+              onClick={() => handleLinkClick(item.href)}
             >
               <svg
                 className="h-5 w-5 mr-3"
